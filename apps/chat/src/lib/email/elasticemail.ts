@@ -10,7 +10,7 @@ export default async function sendEmail(to: string, code: string | number) {
     from: senderEmail,
     to: to,
     subject: "【AI创客工坊】ChatGPT验证码",
-    bodyHtml: `欢迎关注微信公众号【AI创客工坊】获取免费账号/使用攻略<br>您的验证码是：${code}`,
+    bodyHtml: `欢迎关注微信公众号【AI创客工坊】<br>获取ChatGPT免费账号/使用攻略<br><br>您的验证码是：${code}`,
   };
 
   const formData = new FormData();
