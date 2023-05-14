@@ -9,8 +9,8 @@ export default async function sendEmail(to: string, code: string | number) {
     apikey: apiKey,
     from: senderEmail,
     to: to,
-    subject: "[ChatGPT-Admin-Web] 激活码",
-    bodyHtml: `您的激活码是：${code}`,
+    subject: "[AI创客工坊]ChatGPT验证码",
+    bodyHtml: `欢迎关注微信公众号：[AI创客工坊]获取免费账号/使用攻略  您的验证码是：${code}`,
   };
 
   const formData = new FormData();
