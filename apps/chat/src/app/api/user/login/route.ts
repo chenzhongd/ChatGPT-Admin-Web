@@ -12,23 +12,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ status: ResponseStatus.wrongPassword });
     }
 
-    const tokenGenerator = await accessControlLogic.newJWT(email);
-
-    if (!tokenGenerator)
+    const sessionToken = await accessControlLogic.newJWT(email);
+    if (sessionToken) {
+      return NextResponse.json({
+        status: ResponseStatus.Success,
+        sessionToken,
+      });
+    } else {
       return NextResponse.json({
         status: ResponseStatus.Failed,
       });
-
-    const { token: sessionToken, exp } = tokenGenerator;
-    return NextResponse.json({
-      status: ResponseStatus.Success,
-      sessionToken,
-      exp,
-    });
+    }
   } catch (error) {
     console.error("[SERVER ERROR]", error);
     return new Response("[INTERNAL ERROR]", { status: 500 });
   }
 }
 
-export const runtime = "edge";
+export const runtime = 'edge';

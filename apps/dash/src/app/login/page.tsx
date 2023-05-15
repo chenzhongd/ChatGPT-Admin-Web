@@ -47,8 +47,8 @@ export default function LoginPage() {
     });
 
     if (data.ok) {
-      const { sessionToken, exp } = await data.json();
-      updateSessionToken(sessionToken, exp);
+      const { sessionToken } = await data.json();
+      updateSessionToken(sessionToken);
       setToast({ text: "登录成功" });
       router.push("/");
     }

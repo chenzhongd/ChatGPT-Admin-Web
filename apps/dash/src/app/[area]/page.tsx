@@ -4,7 +4,6 @@ import useSWR from "swr";
 import fetcher from "@/utils/fetcher";
 
 import {
-  Button,
   Card,
   Grid,
   Input,
@@ -31,11 +30,10 @@ export default function Page({
 }) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [cursor, setCursor] = useState<number>(0);
-  const [count, setCount] = useState<number>(100);
-  const [key, setKey] = useState<string>("");
+  const [count, setCount] = useState<number>(10);
 
   const { data, isLoading } = useSWR(
-    `/api/${params.area}?cursor=${cursor}&count=${count}&key=${key}` as string,
+    `/api/${params.area}?cursor=${cursor}&&count=${count}` as string,
     (url) => fetcher(url).then((res) => res.json())
   );
 
@@ -65,11 +63,7 @@ export default function Page({
       setCurrentPage(0);
       setCount(Math.abs(gap) * 10);
     }
-    // setCount();
-  };
-
-  const handleSearch = () => {
-    setKey(searchUser);
+    setCount();
   };
 
   if (isLoading) return <Loading />;
@@ -88,20 +82,15 @@ export default function Page({
               <Select.Option value="2">Pro</Select.Option>
               <Select.Option value="3">Premium</Select.Option>
             </Select>
-            <Spacer w={5} />
-
-            <Button loading={isLoading} onClick={handleSearch}>
-              搜索
-            </Button>
           </div>
         </Card>
       </Grid>
       <Grid xs={24}>
         <Table tableColumn={columns} tableData={data?.data?.data} />
       </Grid>
-      {/*<Grid xs={12}>*/}
-      {/*  <Pagination page={currentPage} initialPage={1} onChange={pageChange} />*/}
-      {/*</Grid>*/}
+      <Grid xs={12}>
+        <Pagination page={currentPage} initialPage={1} onChange={pageChange} />
+      </Grid>
     </Grid.Container>
   );
 }

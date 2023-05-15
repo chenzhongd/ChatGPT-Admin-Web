@@ -10,8 +10,7 @@ export default function Index() {
 
   return (
     <div className={styles["content"]}>
-      <h2 className={styles["text"]}>ChatGPT</h2>
-      <h3 className={styles["text"]}>微信公众号:AI创客工坊</h3>
+      <h2 className={styles["text"]}>AI BOT</h2>
       <div className={styles["buttons"]}>
         <button
           className={styles["button"]}

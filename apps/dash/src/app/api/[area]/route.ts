@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { OrderDAL, UserDAL, PlanDAL } from "database";
+import { OrderDAL, UserDAL } from "database";
 
 type Area = "user" | "order" | "plan";
 
-type DAL = UserDAL | OrderDAL | PlanDAL;
+type DAL = UserDAL | OrderDAL;
 
 async function Query(req: NextRequest, dal: DAL) {
   const searchParams = req.nextUrl.searchParams;
@@ -16,8 +16,8 @@ async function Query(req: NextRequest, dal: DAL) {
 
   const values = await dal.listValuesOfKeys(...keys);
   const data = keys.map((k, i) => ({
-    ...values[i],
     [dal.namespace.slice(0, -1)]: k.slice(dal.namespace.length),
+    ...values[i],
   }));
 
   return NextResponse.json({
@@ -38,16 +38,13 @@ export async function GET(
     params: { area: Area };
   }
 ) {
-  let dal: DAL;
+  let dal: UserDAL | OrderDAL;
   switch (params.area) {
     case "order":
       dal = new OrderDAL();
       break;
     case "user":
       dal = new UserDAL();
-      break;
-    case "plan":
-      dal = new PlanDAL();
       break;
     default:
       return NextResponse.json({}, { status: 404 });
@@ -56,4 +53,6 @@ export async function GET(
   return await Query(req, dal);
 }
 
-export const runtime = "edge";
+export const config = {
+  runtime: "edge",
+};

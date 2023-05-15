@@ -20,10 +20,6 @@ const Menu: React.FC<unknown> = () => {
       name: "订单",
       link: "/order",
     },
-    {
-      name: "设置",
-      link: "/setting",
-    },
   ];
 
   const handleTabChange = (val: string) => {
