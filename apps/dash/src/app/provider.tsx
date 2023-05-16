@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useUserStore } from "@/store";
 import { GeistProvider, CssBaseline, Page } from "@geist-ui/core";
 import Menu from "@/components/layout/menu/menu";
-
+import { showToast } from "@/components/ui-lib";
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
     <GeistProvider>
