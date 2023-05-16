@@ -22,10 +22,10 @@ export const colorToRgbValues = (color: string) => {
   const colorType = color.substr(0, 4);
 
   const regArray = safeColor.match(/\((.+)\)/);
-  if (!colorType.startsWith("rgb") || !regArray) {
-    console.log(color);
-    throw new Error(`Geist UI: Only support ["RGB", "RGBA", "HEX"] color.`);
-  }
+  // if (!colorType.startsWith("rgb") || !regArray) {
+  //   console.log(color);
+  //   throw new Error(`Geist UI: Only support ["RGB", "RGBA", "HEX"] color.`);
+  // }
 
   return regArray[1].split(",").map((str) => Number.parseFloat(str));
 };

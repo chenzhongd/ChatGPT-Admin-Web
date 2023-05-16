@@ -40,29 +40,29 @@ export class BingBot extends AbstractBot {
       throw new Error(`${response.statusText}: ${await response.text()}`);
     }
 
-    for await (const line of streamToLineIterator(response.body!)) {
-      if (line.startsWith("data:")) {
-        const event: BingEvent = JSON.parse(line.slice("data:".length));
-        switch (event.type) {
-          case BingEventType.ANSWER: {
-            yield event.answer;
-            break;
-          }
-          case BingEventType.QUERY: {
-            yield event.query;
-            break;
-          }
-          case BingEventType.RESET: {
-            return;
-          }
-          case BingEventType.DONE: {
-            return;
-          }
-          case BingEventType.ERROR: {
-            throw new Error(`Bing: ${event.error}`);
-          }
-        }
-      }
-    }
+    // for await (const line of streamToLineIterator(response.body!)) {
+    //   if (line.startsWith("data:")) {
+    //     const event: BingEvent = JSON.parse(line.slice("data:".length));
+    //     switch (event.type) {
+    //       case BingEventType.ANSWER: {
+    //         yield event.answer;
+    //         break;
+    //       }
+    //       case BingEventType.QUERY: {
+    //         yield event.query;
+    //         break;
+    //       }
+    //       case BingEventType.RESET: {
+    //         return;
+    //       }
+    //       case BingEventType.DONE: {
+    //         return;
+    //       }
+    //       case BingEventType.ERROR: {
+    //         throw new Error(`Bing: ${event.error}`);
+    //       }
+    //     }
+    //   }
+    // }
   }
 }

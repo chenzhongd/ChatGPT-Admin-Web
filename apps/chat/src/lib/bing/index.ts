@@ -45,9 +45,9 @@ export async function* streamToEventGenerator(
     const { done, value: line } = await reader.read();
     if (done) break;
 
-    if (line.startsWith("data:")) {
-      yield JSON.parse(line.slice("data:".length));
-    }
+    // if (line.startsWith("data:")) {
+    //   yield JSON.parse(line.slice("data:".length));
+    // }
   }
 
   reader.releaseLock();

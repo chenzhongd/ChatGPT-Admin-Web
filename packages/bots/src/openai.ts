@@ -39,7 +39,7 @@ export class OpenAIBot extends AbstractBot {
     const lines = streamToLineIterator(response.body!);
 
     for await (const line of lines) {
-      if (!line.startsWith('data:')) continue;
+      // if (!line.startsWith('data:')) continue;
 
       const data = line.slice('data:'.length).trim();
 
