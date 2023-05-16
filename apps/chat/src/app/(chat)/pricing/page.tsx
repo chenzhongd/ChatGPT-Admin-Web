@@ -66,7 +66,6 @@ function PricingItem(props: {
   cycle: PaymentCycleType;
   price: Price;
 }) {
-
   async function handleUpgrade(plan: PlanType, cycle: PaymentCycleType) {
     const req = await (
       await fetcher(`/api/user/pay?plan=${plan.toLowerCase()}&cycle=${cycle}`, {
@@ -127,7 +126,7 @@ export default function PricingPage() {
           <div className={styles["window-action-button"]}>
             <IconButton
               icon={<CloseIcon />}
-              onClick={() => router.push("/")}
+              onClick={() => router.back()}
               bordered
               title={Locale.Settings.Actions.Close}
             />

@@ -15,30 +15,20 @@ until cursor == "0"
 return count
 `;
 
-const getJSONValuesScript = `
-local pattern = ARGV[1]
-local path = ARGV[2] or "$"
-local cursor = "0"
+const scanKeysScript = `
+local pattern = KEYS[1]
+local cursor = '0'
 local keys = {}
 
 repeat
-    local result = redis.call('SCAN', cursor, 'MATCH', pattern, "COUNT", 1000)
+    local result = redis.call('SCAN', cursor, 'MATCH', pattern, 'COUNT', 1000)
     cursor = result[1]
     for i, key in ipairs(result[2]) do
-        keys[#keys + 1] = key
+        table.insert(keys, key)
     end
-until cursor == "0"
+until cursor == '0'
 
-if #keys > 0 then
-    local args = {}
-    for i, key in ipairs(keys) do
-        args[#args + 1] = key
-    end
-    args[#args + 1] = path
-    return redis.call('JSON.MGET', unpack(args))
-else
-    return {}
-end
+return keys
 `;
 
 export class AnalysisDAL {
@@ -58,44 +48,47 @@ export class AnalysisDAL {
     return this.redis.eval(countKeysScript, [], ['order:*']);
   }
 
-  /**
-   * Get the values of all users.
-   */
-  getUserValues(): Promise<[User][]> {
-    return this.redis.eval(getJSONValuesScript, [], ['user:*']);
+  getUserKeys(): Promise<string[]> {
+    return this.redis.eval(scanKeysScript, ["user:*"], []);
   }
 
-  /**
-   * Get the values of all orders.
-   */
-  getOrderValues(): Promise<[Order][]> {
-    return this.redis.eval(getJSONValuesScript, [], ['order:*']);
+  getOrderKeys(): Promise<string[]> {
+    return this.redis.eval(scanKeysScript, ["order:*"], []);
   }
 
-  /**
-   * Get the specified key from the user.
-   */
-  getUsersPropertyValues<K extends keyof User>(
-    property: K
-  ): Promise<[User[K]][]> {
-    return this.redis.eval(
-      getJSONValuesScript,
-      [],
-      ['user:*', '$.' + property]
-    );
+  async getUsersPropertyValues<K extends keyof User>(): Promise<[User][]>;
+  async getUsersPropertyValues<K extends keyof User>(
+    property: K,
+  ): Promise<[User[K]][]>;
+
+  async getUsersPropertyValues<K extends keyof User>(
+    property?: K,
+  ) {
+    const keys = await this.getUserKeys();
+    return this.getJSONValues(keys, property ? `$.${property}` : "$");
   }
 
-  /**
-   * Get the specified key from the order.
-   * @param property
-   */
-  getOrdersPropertyValues<K extends keyof Order>(
-    property: K
-  ): Promise<[Order[K]][]> {
-    return this.redis.eval(
-      getJSONValuesScript,
-      [],
-      ['order:*', '$.' + property]
-    );
+  async getOrdersPropertyValues<K extends keyof Order>(): Promise<[Order][]>;
+  async getOrdersPropertyValues<K extends keyof Order>(
+    property: K,
+  ): Promise<[Order[K]][]>;
+
+  async getOrdersPropertyValues<K extends keyof Order>(
+    property?: K,
+  ) {
+    const keys = await this.getOrderKeys();
+    return this.getJSONValues(keys, property ? `$.${property}` : "$");
+  }
+
+  private async getJSONValues<T>(keys: string[], path = "$"): Promise<[T][]> {
+    // partition keys to 2500 per group
+    const groups: string[][] = [];
+    for (let i = 0; i < keys.length; i += 2500) {
+      groups.push(keys.slice(i, i + 2500));
+    }
+
+    return (await Promise.all(
+      groups.map((group) => this.redis.json.mget(group, path)),
+    )).flat();
   }
 }

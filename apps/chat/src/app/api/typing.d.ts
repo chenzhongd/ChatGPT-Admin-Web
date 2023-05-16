@@ -35,7 +35,7 @@ export interface InfoResponse {
   email: string;
   role: Role;
   plan: Plan;
-  inviteCode?: string;
-  chances?: number;
+  inviteCode: string;
+  requestNos: number[];
   resetChances: number;
 }

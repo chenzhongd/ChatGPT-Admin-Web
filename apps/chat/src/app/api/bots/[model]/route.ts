@@ -41,10 +41,7 @@ export async function POST(
       bot = new BingBot(BING_COOKIE);
       break;
     default:
-      return NextResponse.json(
-        { msg: "unable to find model" },
-        { status: 404 }
-      );
+      return NextResponse.json({}, { status: 404 });
   }
 
   const rateLimit = await ModelRateLimiter.of({ email, model });

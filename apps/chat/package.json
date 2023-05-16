@@ -29,8 +29,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "clean": "pnpm recursive exec -- rm -rf node_modules"
+    "lint": "next lint"
   },
   "dependencies": {
     "@edge-runtime/ponyfill": "^2.1.2",

@@ -40,5 +40,3 @@ export async function GET(req: NextRequest): Promise<Response> {
       );
   }
 }
-
-export const runtime = 'edge';

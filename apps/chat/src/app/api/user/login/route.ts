@@ -28,5 +28,3 @@ export async function POST(req: NextRequest) {
     return new Response("[INTERNAL ERROR]", { status: 500 });
   }
 }
-
-export const runtime = 'edge';

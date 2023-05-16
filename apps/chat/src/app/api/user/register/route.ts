@@ -6,7 +6,7 @@ import {
   InvitationCodeLogic,
   AccessControlLogic,
 } from "database";
-import { ResponseStatus } from "@/app/api/typing.d";
+import { ReturnStatus, ResponseStatus } from "@/app/api/typing.d";
 
 const ifVerifyCode = !!process.env.NEXT_PUBLIC_EMAIL_SERVICE;
 
@@ -67,5 +67,3 @@ export async function POST(req: NextRequest): Promise<Response> {
     return new Response("[INTERNAL ERROR]", { status: 500 });
   }
 }
-
-export const runtime = "edge";

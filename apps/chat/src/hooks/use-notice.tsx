@@ -1,34 +1,20 @@
-import useSWR from "swr";
 import { showModal } from "@/components/ui-lib";
-import { ResponseStatus } from "@/app/api/typing.d";
-import { useNoticeStore } from "@/store";
-import { Markdown } from "@/components/markdown";
-
-export function showAnnouncement(notice: string) {
+export function showAnnouncement() {
   showModal({
     title: "Announcement 公告",
-    children: <Markdown content={notice} />,
+    children: <div></div>,
     // onClose: () => {}
   });
 }
 
-export function useNotice() {
-  const updateNotice = useNoticeStore((store) => store.updateNotice);
-
-  const { data: noticeNew, isLoading } = useSWR<string | null>(
-    "/api/notice",
-    (url) =>
-      fetch(url)
-        .then((res) => res.json())
-        .then((res) => {
-          switch (res.status) {
-            case ResponseStatus.Success:
-              return res.notice as string;
-            default:
-              return null;
-          }
-        })
-  );
-  if (noticeNew && updateNotice(noticeNew)) return noticeNew;
-  return null;
+export function Announcement(
+  versionId: string,
+  updateVersionId: (versionId: string) => void
+) {
+  // return fetch(`/api/announcement?versionId=${versionId}`).then((res) =>
+  const versionIdNow = "20230410";
+  if (versionIdNow !== versionId) {
+    updateVersionId(versionIdNow);
+    showAnnouncement();
+  }
 }

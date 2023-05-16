@@ -3,7 +3,7 @@ import "@/styles/globals.scss";
 import "@/styles/markdown.scss";
 import "@/styles/prism.scss";
 import { Analytics } from "@vercel/analytics/react";
-import { AuthProvider, NoticeProvider, SWRProvider } from "@/app/provider";
+import { AuthProvider } from "@/app/provider";
 
 export const metadata = {
   title: "ChatGPT",
@@ -31,11 +31,7 @@ export default function RootLayout({
         ></link>
       </head>
       <body>
-        <SWRProvider>
-          <NoticeProvider>
-            <AuthProvider>{children}</AuthProvider>
-          </NoticeProvider>
-        </SWRProvider>
+        <AuthProvider>{children}</AuthProvider>
         <Analytics />
       </body>
     </html>

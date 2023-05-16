@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useSWR, { mutate } from "swr";
 import { useRouter } from "next/navigation";
 
-import { useLimit } from "@/hooks/use-limit";
-import { useSubscription } from "@/hooks/use-subscription";
 import { useSettingStore } from "@/store";
 
 import { Avatar } from "@/components/avatar";
@@ -20,9 +18,7 @@ import EmojiPicker, { Theme as EmojiTheme } from "emoji-picker-react";
 
 import fetcher from "@/utils/fetcher";
 import { copyToClipboard } from "@/utils/utils";
-import { InfoResponse, ResponseStatus } from "@/app/api/typing.d";
-import { SubscribeTable } from "@/components/table";
-import { useInviteCode } from "@/hooks/use-invite-code";
+import { InfoResponse } from "@/app/api/typing";
 
 function ProfileItem(props: {
   title: string;
@@ -44,7 +40,6 @@ function ProfileItem(props: {
 
 export default function Profile() {
   const router = useRouter();
-
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [config, updateConfig, resetConfig] = useSettingStore((state) => [
     state.config,
@@ -52,32 +47,26 @@ export default function Profile() {
     state.resetConfig,
   ]);
 
-  const {
-    data: info,
-    isLoading: infoLoading,
-    mutate: infoMutate,
-  } = useSWR<InfoResponse>("/api/user/info", (url) =>
-    fetcher(url).then((res) => res.json())
+  const { data: info, isLoading: infoLoading } = useSWR<InfoResponse>(
+    "/api/user/info",
+    (url) => fetcher(url).then((res) => res.json())
   );
 
-  /**
-   * 此处使用条件加载，一般来说用户可能不需要邀请码，当用户点击复制邀请码后，再请求邀请码。
-   */
-  const [shouldGetInviteCode, setShouldGetInviteCode] =
-    useState<boolean>(false);
-  const { data: inviteCode, isLoading: inviteCodeLoading } =
-    useInviteCode(shouldGetInviteCode);
+  if (infoLoading) return <Loading />;
 
   const {
     email: email,
     role: role,
     plan: plan,
+    inviteCode: inviteCode,
+    requestNos: requestNos,
     resetChances: resetChances,
   } = info ?? {
     email: "",
     role: "user",
     plan: "free",
     inviteCode: "",
+    requestNos: [],
     resetChances: 0,
   };
 
@@ -98,19 +87,6 @@ export default function Profile() {
     });
   }
 
-  const { data: subscription, isLoading: subscriptionLoading } =
-    useSubscription();
-  useEffect(() => {
-    if (shouldGetInviteCode) showToast("正在获取邀请码");
-  }, [shouldGetInviteCode]);
-
-  useEffect(() => {
-    if (inviteCode)
-      copyToClipboard(`${window.location.origin}/register?code=${inviteCode}`);
-  }, [inviteCode]);
-
-  if (infoLoading) return <Loading />;
-
   return (
     <>
       <div className={styles["window-header"]}>
@@ -124,7 +100,7 @@ export default function Profile() {
           <div className={styles["window-action-button"]}>
             <IconButton
               icon={<CloseIcon />}
-              onClick={() => router.push("/")}
+              onClick={() => router.back()}
               bordered
               title={Locale.Settings.Actions.Close}
             />
@@ -176,8 +152,6 @@ export default function Profile() {
           </ProfileItem>
         </List>
 
-        {subscription && <SubscribeTable data={subscription} />}
-
         <List>
           <ProfileItem
             title={Locale.Profile.Invite.Title}
@@ -186,13 +160,11 @@ export default function Profile() {
             <button
               className={styles["copy-button"]}
               value={config.submitKey}
-              onClick={() => {
-                if (inviteCode)
-                  copyToClipboard(
-                    `${window.location.origin}/register?code=${inviteCode}`
-                  );
-                else setShouldGetInviteCode(true);
-              }}
+              onClick={() =>
+                copyToClipboard(
+                  `${window.location.origin}/register?code=${inviteCode}`
+                )
+              }
             >
               {Locale.Profile.Invite.CopyInviteLink}
             </button>
@@ -205,15 +177,9 @@ export default function Profile() {
             <button
               className={styles["copy-button"]}
               value={config.submitKey}
-              onClick={async () => {
-                await handleResetLimit();
-                await infoMutate({
-                  ...info!,
-                  resetChances: info?.resetChances! - 1 ?? 0,
-                });
-              }}
+              onClick={() => handleResetLimit()}
             >
-              {Locale.Profile.Reset.Click(resetChances ?? 0)}
+              {Locale.Profile.Reset.Click(resetChances ?? -1)}
             </button>
           </ProfileItem>
         </List>

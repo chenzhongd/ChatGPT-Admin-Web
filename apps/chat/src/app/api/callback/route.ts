@@ -32,5 +32,3 @@ export async function POST(req: NextRequest) {
 
   return new Response("success"); // 规定返回值 不可修改
 }
-
-export const runtime = 'edge';

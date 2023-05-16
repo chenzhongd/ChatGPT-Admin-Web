@@ -1,11 +1,9 @@
 "use client";
 
-import { SWRConfig } from "swr";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { useUserStore, useNoticeStore } from "@/store";
-import { showAnnouncement, useNotice } from "@/hooks/use-notice";
+import { useUserStore } from "@/store";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -29,24 +27,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-export function NoticeProvider({ children }: { children: React.ReactNode }) {
-  const notice = useNotice();
-
-  useEffect(() => {
-    if (notice) showAnnouncement(notice);
-  }, [notice]);
-
-  return <>{children}</>;
-}
-
-export function SWRProvider({ children }: { children: React.ReactNode }) {
-  return (
-    <SWRConfig
-      value={{
-        revalidateOnFocus: false,
-      }}
-    >
-      {children}
-    </SWRConfig>
-  );
+export function Notice() {
+  // Announcement(versionId, updateVersionId);
 }
