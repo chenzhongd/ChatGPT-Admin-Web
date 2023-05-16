@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   showToast(pathname);
   return (
     <>
-      {pathname.startsWith("/login") ? (
+      {pathname.startsWith("login") ? (
         <>{children}</>
       ) : (
         <Page>
