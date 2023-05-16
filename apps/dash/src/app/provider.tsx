@@ -32,19 +32,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [router, pathname, sessionToken, validateSessionToken]);
 
-  return (
-    <>
-      {pathname.startsWith("/login") ? (
-        <>{children}</>
-      ) : (
-        <Page>
-          <Page.Header>
-            <Menu />
-          </Page.Header>
-          <Page.Content>{children}</Page.Content>
-          <Page.Footer></Page.Footer>
-        </Page>
-      )}
-    </>
-  );
+  return <>{children}</>;
+  // return (
+  //   <>
+  //     {pathname.startsWith("/login") ? (
+  //       <>{children}</>
+  //     ) : (
+  //       <Page>
+  //         <Page.Header>
+  //           <Menu />
+  //         </Page.Header>
+  //         <Page.Content>{children}</Page.Content>
+  //         <Page.Footer></Page.Footer>
+  //       </Page>
+  //     )}
+  //   </>
+  // );
 }
