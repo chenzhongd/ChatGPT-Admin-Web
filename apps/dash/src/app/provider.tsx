@@ -32,6 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [router, pathname, sessionToken, validateSessionToken]);
 
+  showToast(pathname);
   return (
     <>
       {pathname.startsWith("/login") ? (
